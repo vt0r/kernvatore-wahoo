@@ -39,6 +39,8 @@
 
 DEFINE_LED_TRIGGER(bl_led_trigger);
 
+bool mdss_screen_on = true;
+
 void mdss_dsi_panel_pwm_cfg(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	if (ctrl->pwm_pmi)
@@ -687,7 +689,7 @@ static int mdss_dsi_set_col_page_addr(struct mdss_panel_data *pdata,
 
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
-
+	mdss_screen_on = true;
 	pinfo = &pdata->panel_info;
 	p_roi = &pinfo->roi;
 
@@ -1089,6 +1091,8 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 
 	if (ctrl->off_cmds.cmd_cnt)
 		mdss_dsi_panel_cmds_send(ctrl, &ctrl->off_cmds, CMD_REQ_COMMIT);
+
+	mdss_screen_on = false;
 
 	if (ctrl->ds_registered && pinfo->is_pluggable) {
 		mdss_dba_utils_video_off(pinfo->dba_data);
